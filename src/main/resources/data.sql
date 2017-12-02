@@ -1,4 +1,4 @@
--- This is being picked up by Spring Boot?
+-- Spring’s DataSource initializer via Spring Boot
 INSERT INTO category (description) VALUES ('American');
 INSERT INTO category (description) VALUES ('Italian');
 INSERT INTO category (description) VALUES ('Mexican');
