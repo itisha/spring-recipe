@@ -1,12 +1,9 @@
 package org.tisha.controllers;
 
-import java.util.Optional;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.tisha.domain.Category;
-import org.tisha.domain.UnitOfMeasure;
-import org.tisha.repositories.CategoryRepository;
-import org.tisha.repositories.UnitOfMeasureRepository;
+import org.tisha.services.RecipeService;
 
 /**
  * Created by t on 20.11.2017.
@@ -14,23 +11,17 @@ import org.tisha.repositories.UnitOfMeasureRepository;
 @Controller
 public class IndexController {
 
-    private CategoryRepository categoryRepository;
-    private UnitOfMeasureRepository unitOfMeasureRepository;
 
-    public IndexController(CategoryRepository categoryRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
-        this.categoryRepository = categoryRepository;
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
+    private final RecipeService recipeService;
+
+    //todo NO AUTOWIRED!!!
+    public IndexController(RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
 
     @RequestMapping({"", "/", "/index"})
-    public String getIndexPage() {
-
-        Optional<Category> categoryOptional = categoryRepository.findByDescription("American");
-        Optional<UnitOfMeasure> unitOfMeasureOptional = unitOfMeasureRepository.findByDescription("Teaspoon");
-
-        System.out.println("Cat Id is: " + categoryOptional.get().getId());
-        System.out.println("UOM ID is: " + unitOfMeasureOptional.get().getId());
-
+    public String getIndexPage(Model model) {
+        model.addAttribute("recipes", recipeService.getRecipes());
         return "index";
     }
 }
