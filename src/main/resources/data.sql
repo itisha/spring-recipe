@@ -1,4 +1,5 @@
 -- Spring’s DataSource initializer via Spring Boot
+-- It searches root for files data.sql and schema.sql
 INSERT INTO category (description) VALUES ('American');
 INSERT INTO category (description) VALUES ('Italian');
 INSERT INTO category (description) VALUES ('Mexican');
