@@ -14,8 +14,6 @@ import java.util.Set;
 @Entity
 public class Category {
 
-    breaking the build
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
