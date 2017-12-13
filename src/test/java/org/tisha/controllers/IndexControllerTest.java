@@ -2,6 +2,7 @@ package org.tisha.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
@@ -34,14 +35,27 @@ public class IndexControllerTest {
 
     @Test
     public void getIndexPage() {
-        Recipe recipe = new Recipe();
+        //given
+        Recipe recipe1 = new Recipe();
+        recipe1.setId(1L);
+        Recipe recipe2 = new Recipe();
+        recipe2.setId(2L);
         Set<Recipe> recipes = new HashSet<>();
-        recipes.add(recipe);
+        recipes.add(recipe1);
+        recipes.add(recipe2);
+
         when(recipeService.getRecipes()).thenReturn(recipes);
 
+        ArgumentCaptor<Set<Recipe>> setArgumentCaptor = ArgumentCaptor.forClass(Set.class);
+
+        //when
         String indexPage = indexController.getIndexPage(model);
+
+        //then
         assertEquals("index", indexPage);
         verify(recipeService, times(1)).getRecipes();
-        verify(model, times(1)).addAttribute(eq("recipes"), eq(recipes));
+        verify(model, times(1)).addAttribute(eq("recipes"), setArgumentCaptor.capture());
+        Set<Recipe> capturedSet = setArgumentCaptor.getValue();
+        assertEquals(2, capturedSet.size());
     }
 }
