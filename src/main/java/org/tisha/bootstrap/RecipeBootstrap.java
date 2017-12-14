@@ -5,10 +5,6 @@ package org.tisha.bootstrap;
  */
 
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -21,6 +17,11 @@ import org.tisha.domain.UnitOfMeasure;
 import org.tisha.repositories.CategoryRepository;
 import org.tisha.repositories.RecipeRepository;
 import org.tisha.repositories.UnitOfMeasureRepository;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by jt on 6/13/17.
@@ -150,6 +151,10 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
         guacRecipe.getCategories().add(americanCategory);
         guacRecipe.getCategories().add(mexicanCategory);
+
+        guacRecipe.setUrl("http://example.com/");
+        guacRecipe.setServings(4);
+        guacRecipe.setSource("Simple Recipe");
 
         //add to return list
         recipes.add(guacRecipe);
