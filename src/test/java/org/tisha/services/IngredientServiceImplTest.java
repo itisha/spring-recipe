@@ -121,4 +121,25 @@ public class IngredientServiceImplTest {
 
     }
 
+    @Test
+    public void deleteByRecipeIdAndIngredientId() {
+        Ingredient ingredient1 = new Ingredient();
+        ingredient1.setId(1L);
+        Ingredient ingredient2 = new Ingredient();
+        ingredient2.setId(2L);
+
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        recipe.addIngredient(ingredient1);
+        recipe.addIngredient(ingredient2);
+
+        when(recipeRepository.findById(anyLong())).thenReturn(Optional.of(recipe));
+
+        assertEquals(2, recipe.getIngredients().size());
+        ingredientService.deleteByRecipeIdAndIngredientId(1L, 2L);
+        assertEquals(1, recipe.getIngredients().size());
+
+        verify(recipeRepository, times(1)).findById(anyLong());
+        verify(recipeRepository, times(1)).save(any(Recipe.class));
+    }
 }
