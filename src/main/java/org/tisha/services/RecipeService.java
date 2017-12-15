@@ -1,6 +1,5 @@
 package org.tisha.services;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.tisha.commands.RecipeCommand;
 import org.tisha.domain.Recipe;
 
@@ -17,6 +16,7 @@ public interface RecipeService {
 
     RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
 
-    @Transactional
     RecipeCommand findCommandById(Long l);
+
+    void deleteById(Long id);
 }
