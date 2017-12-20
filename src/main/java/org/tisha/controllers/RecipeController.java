@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +16,13 @@ import org.tisha.commands.RecipeCommand;
 import org.tisha.exceptions.NotFoundException;
 import org.tisha.services.RecipeService;
 
+import javax.validation.Valid;
+
 @Slf4j
 @Controller
 public class RecipeController {
+
+    private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeForm";
 
     //autowired automatically wow!
     private final RecipeService recipeService;
@@ -35,17 +40,26 @@ public class RecipeController {
     @RequestMapping("recipe/new")
     public String newRecipe(Model model) {
         model.addAttribute("recipe", new RecipeCommand());
-        return "recipe/recipeForm";
+        return RECIPE_RECIPEFORM_URL;
     }
 
     @RequestMapping("recipe/{id}/update")
     public String updateRecipe(@PathVariable Long id, Model model) {
         model.addAttribute("recipe", recipeService.findCommandById(id));
-        return "recipe/recipeForm";
+        return RECIPE_RECIPEFORM_URL;
     }
 
     @RequestMapping(value = "recipe", method = RequestMethod.POST)
-    public String saveOrUpdate(@ModelAttribute RecipeCommand recipeCommand) {
+    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand recipeCommand, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(err -> {
+                log.debug(err.toString());
+            });
+
+            return RECIPE_RECIPEFORM_URL;
+        }
+
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(recipeCommand);
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
