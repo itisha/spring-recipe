@@ -70,16 +70,4 @@ public class RecipeController {
         return modelAndView;
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)// precedence over  ResponseStatus in NotFoundException.class
-    @ExceptionHandler(NumberFormatException.class)
-    public ModelAndView handleNumberFormatException(Exception exception) {
-        log.error("Handling NumberFormatException");
-        log.error(exception.getMessage());
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("400error");
-        modelAndView.addObject("exception", exception);
-
-        return modelAndView;
-    }
-
 }
