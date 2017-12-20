@@ -27,8 +27,8 @@ public class RecipeController {
     }
 
     @RequestMapping("/recipe/{id}/show")
-    public String showById(@PathVariable Long id, Model model) {
-        model.addAttribute("recipe", recipeService.findById(id));
+    public String showById(@PathVariable String id, Model model) {
+        model.addAttribute("recipe", recipeService.findById(new Long(id)));//to throw NumberFormatException
         return "recipe/show";
     }
 
@@ -65,6 +65,18 @@ public class RecipeController {
         log.error(exception.getMessage());
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("404error");
+        modelAndView.addObject("exception", exception);
+
+        return modelAndView;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)// precedence over  ResponseStatus in NotFoundException.class
+    @ExceptionHandler(NumberFormatException.class)
+    public ModelAndView handleNumberFormatException(Exception exception) {
+        log.error("Handling NumberFormatException");
+        log.error(exception.getMessage());
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("400error");
         modelAndView.addObject("exception", exception);
 
         return modelAndView;
