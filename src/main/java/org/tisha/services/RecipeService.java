@@ -13,11 +13,11 @@ public interface RecipeService {
 
     Set<Recipe> getRecipes();
 
-    Recipe findById(Long l) throws NotFoundException;
+    Recipe findById(Long id) throws NotFoundException;
 
     RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
 
-    RecipeCommand findCommandById(Long l);
+    RecipeCommand findCommandById(Long id);
 
     void deleteById(Long id);
 }

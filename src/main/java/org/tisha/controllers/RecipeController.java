@@ -58,13 +58,14 @@ public class RecipeController {
         return "redirect:/";
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_FOUND)// precedence over  ResponseStatus in NotFoundException.class
     @ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFound() {
+    public ModelAndView handleNotFound(Exception exception) {
         log.error("Handling not found exception");
-
+        log.error(exception.getMessage());
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("404error");
+        modelAndView.addObject("exception", exception);
 
         return modelAndView;
     }
