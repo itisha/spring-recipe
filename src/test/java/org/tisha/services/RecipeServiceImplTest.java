@@ -4,9 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.tisha.commands.RecipeCommand;
 import org.tisha.converters.RecipeCommandToRecipe;
 import org.tisha.converters.RecipeToRecipeCommand;
 import org.tisha.domain.Recipe;
+import org.tisha.exceptions.NotFoundException;
 import org.tisha.repositories.RecipeRepository;
 
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -23,16 +26,16 @@ import static org.mockito.Mockito.when;
 
 public class RecipeServiceImplTest {
 
-    private RecipeServiceImpl recipeService;
+    RecipeServiceImpl recipeService;
 
     @Mock
-    private RecipeRepository recipeRepository;
+    RecipeRepository recipeRepository;
 
     @Mock
-    private RecipeToRecipeCommand recipeToRecipeCommand;
+    RecipeToRecipeCommand recipeToRecipeCommand;
 
     @Mock
-    private RecipeCommandToRecipe recipeCommandToRecipe;
+    RecipeCommandToRecipe recipeCommandToRecipe;
 
     @Before
     public void setUp() throws Exception {
@@ -40,7 +43,6 @@ public class RecipeServiceImplTest {
 
         recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
-
 
     @Test
     public void getRecipeByIdTest() throws Exception {
@@ -57,13 +59,45 @@ public class RecipeServiceImplTest {
         verify(recipeRepository, never()).findAll();
     }
 
+    @Test(expected = NotFoundException.class)
+    public void getRecipeByIdTestNotFound() throws Exception {
+
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(1L);
+
+        //should go boom
+    }
+
+    @Test
+    public void getRecipeCommandByIdTest() throws Exception {
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(1L);
+
+        when(recipeToRecipeCommand.convert(any())).thenReturn(recipeCommand);
+
+        RecipeCommand commandById = recipeService.findCommandById(1L);
+
+        assertNotNull("Null recipe returned", commandById);
+        verify(recipeRepository, times(1)).findById(anyLong());
+        verify(recipeRepository, never()).findAll();
+    }
+
     @Test
     public void getRecipesTest() throws Exception {
         Recipe recipe = new Recipe();
-        HashSet<Recipe> recipesData = new HashSet<>();
-        recipesData.add(recipe);
+        HashSet receipesData = new HashSet();
+        receipesData.add(recipe);
 
-        when(recipeService.getRecipes()).thenReturn(recipesData);
+        when(recipeService.getRecipes()).thenReturn(receipesData);
 
         Set<Recipe> recipes = recipeService.getRecipes();
 
@@ -73,10 +107,17 @@ public class RecipeServiceImplTest {
     }
 
     @Test
-    public void testDeleteById() {
-        Long idToDelete = 2L;
+    public void testDeleteById() throws Exception {
+
+        //given
+        Long idToDelete = Long.valueOf(2L);
+
+        //when
         recipeService.deleteById(idToDelete);
 
+        //no 'when', since method has void return type
+
+        //then
         verify(recipeRepository, times(1)).deleteById(anyLong());
     }
 }

@@ -2,6 +2,7 @@ package org.tisha.services;
 
 import org.tisha.commands.RecipeCommand;
 import org.tisha.domain.Recipe;
+import org.tisha.exceptions.NotFoundException;
 
 import java.util.Set;
 
@@ -12,7 +13,7 @@ public interface RecipeService {
 
     Set<Recipe> getRecipes();
 
-    Recipe findById(Long l);
+    Recipe findById(Long l) throws NotFoundException;
 
     RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
 
